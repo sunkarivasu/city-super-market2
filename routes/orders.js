@@ -19,7 +19,7 @@ router.route("/").get((req,res)=>
 
 router.route("/add").post((req,res)=>
 {
-    console.log(req.body.quantity);
+    console.log(req.body);
     var newOrder = new Order (
         {
             userId:req.body.userId,

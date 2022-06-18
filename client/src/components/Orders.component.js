@@ -55,7 +55,7 @@ function Orders()
                 <div class="orderStatus">
                     {/* <div style={{display:"block"}}>Total</div> */}
                     <button className="" style={{width:"10px",height:"10px",borderRadius:"50%",backgroundColor:"green",marginBottom:"5px"}} disabled></button>
-                    <div className="" style={{display:"inline",padding:"30px 10px 0px 10px"}} >Delivered today</div>
+                    <div className="" style={{display:"inline",padding:"30px 10px 0px 10px"}} >Yet to be Delivered</div>
                 </div>
             </div>
         </div>

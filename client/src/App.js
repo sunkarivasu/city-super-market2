@@ -15,6 +15,11 @@ import AdminUpdateProduct from "./components/AdminUpdateProduct.component.js";
 import AdminDeleteProduct from "./components/AdminDeleteProduct.component.js";
 import AdminTest from "./components/AdminTest.component.js";
 import CheckOutPage from "./components/CheckOut.component.js";
+import PaymentCheckOutPage from "./components/PaymentCheckOut.component.js";
+import PaymentSuccessPage from "./components/PaymentSuccess.component.js"
+import PaymentFailurePage from "./components/PaymentFailure.component.js"
+
+
 
 function App() {
   return(
@@ -38,6 +43,14 @@ function App() {
               <Route path="/cart" element={<Cart/>}/>
               <Route path="/order" element={<Orders/>}/>
               <Route path="/checkOut" element={<CheckOutPage/>}/>
+              <Route path="/paymentCheckOut" element={<PaymentCheckOutPage/>}/>
+
+              {/* payments routes */}
+              <Route path="/PAYMENTSUCCESS" element={<PaymentSuccessPage/>}/>
+              <Route path="/PAYMENTFAILURE" element={<PaymentFailurePage/>}/>
+
+
+
             </Routes>
           </div>
         </Router>);

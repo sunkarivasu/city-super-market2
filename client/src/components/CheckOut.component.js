@@ -165,35 +165,66 @@ function CheckOutPage()
                 firstName:form.firstName,
                 lastName:form.lastName,
                 mobile:form.mobile,
+                amount:"1",
+                email:"sunkarivasu1@gmail.com",
                 mandel:form.mandel,
                 village:form.village,
                 doorNumber:form.doorNumber,
                 streetName:form.streetName,
                 // landMark:String,
-                pinCode:form.pinCode
+                pinCode:form.pinCode,  
             }
+
+
+        axios.post("/paynow",deliveryAddress)
+        .then((res) =>
+        {
+            console.log("payment initiated");
+            console.log(JSON.stringify(res.data));
+            localStorage.setItem("paymentDetails",JSON.stringify(res.data));
+            navigate("/paymentCheckOut")
+        })
+        .catch((err) =>
+        {
+           console.log("payment failed");
+        })
+
+            //placing order after payment
+
             orderItemDetails.map((productDetails)=>
             {
+                var actualQuantity
+                if(productDetails.orderQuantity == undefined)
+                {
+                    actualQuantity = 1
+                }
+                else
+                {
+                    actualQuantity = productDetails.orderQuantity
+                }
+
                 var order = 
                 {
                     productId:productDetails._id,
                     userId:JSON.parse(user)._id,
-                    quantity:productDetails.orderQuantity,
-                    amount:productDetails.price*(100-productDetails.discount)/100*productDetails.orderQuantity,
+                    quantity:actualQuantity,
+                    amount:productDetails.price*(100-productDetails.discount)/100*actualQuantity,
                     deliveryAddress:deliveryAddress
                 }
+                console.log(order);
                 axios.post("/orders/add",order)
                 .then(()=>
-                    {
-                        
+                    { 
                         console.log("order placed");
                     })
                 .catch((err)=>{console.log("Error:"+err)})
             })
+
+            // end for placing order after payment
             
                 //setOrderPlaced(true)
-            showToastOnSuccess()
-            setTimeout(() => navigate("/order"),2000);
+            // showToastOnSuccess()
+            // setTimeout(() => navigate("/order"),2000);
         }
     } 
         
@@ -253,55 +284,3 @@ function CheckOutPage()
 
 export default CheckOutPage;
 
-
-// if (id =="firstName" || id=="lastName" || id=="streetName")
-//         {
-//             if(event.target.value.match(/^[a-zA-Z ]{2,}$/))
-//                 setForm({...form,[id]:event.target.value,[id+"Err"]:""});
-//             else
-//                 setForm({...form,[id]:event.target.value,[id+"Err"]:"Invalid "+event.target.placeholder});
-//         }
-//         else if (id=="mobile")
-//         {
-//             var l = event.target.value.length
-//             var lc = event.target.value.charAt(l-1)
-//             if(lc=='0' || lc=='1' || lc=='2' || lc=='3' || lc=='4' || lc=='5' || lc=='6' || lc=='7' || lc=='8' ||lc=='9')
-//                 if(event.target.value.length>10)
-//                     setForm({...form,[id]:event.target.value.slice(0,l-1)})
-//                 else if(event.target.value.length==10)
-//                     setForm({...form,[id]:event.target.value,[id+"Err"]:""})
-//                 else
-//                     setForm({...form,[id]:event.target.value,[id+"Err"]:"Invalid Mobile Number"})
-//             else
-//                 setForm({...form,[id]:event.target.value.slice(0,l-1)})
-//         }
-//         else if (id=="mandel" || id=='village')
-//         {
-//             if(event.target.value=="None")
-//                 setForm({...form,[id]:event.target.value,[id+"Err"]:"Select "+id});
-//             else
-//                 setForm({...form,[id]:event.target.value,[id+"Err"]:""});
-//         }
-//         else if(id=='pinCode')
-//         {
-//             var l = event.target.value.length
-//             var lc = event.target.value.charAt(l-1)
-//             if(lc=='0' || lc=='1' || lc=='2' || lc=='3' || lc=='4' || lc=='5' || lc=='6' || lc=='7' || lc=='8' ||lc=='9')
-//                 if(event.target.value.length>6)
-//                     setForm({...form,[id]:event.target.value.slice(0,l-1)})
-//                 else if(event.target.value.length==6)
-//                     setForm({...form,[id]:event.target.value,[id+"Err"]:""})
-//                 else
-//                     setForm({...form,[id]:event.target.value,[id+"Err"]:"Invalid Pin Code"})
-//             else
-//                 setForm({...form,[id]:event.target.value.slice(0,l-1)})
-//         }
-//         else if(id=='doorNumber')
-//         {
-//             if(event.target.value.length==0)
-//                 setForm({...form,doorNumberErr:"Enter Door No",doorNumber:event.target.value});
-//             else
-//                 setForm({...form,doorNumberErr:"",doorNumber:event.target.value});
-//         }
-
-//         setConfirmButton();
