@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.973d6505.css",
+    "main.js": "/static/js/main.da71c25b.js",
+    "static/media/bipin.mp4": "/static/media/bipin.b567ca76ada864e912c3.mp4",
+    "index.html": "/index.html",
+    "main.973d6505.css.map": "/static/css/main.973d6505.css.map",
+    "main.da71c25b.js.map": "/static/js/main.da71c25b.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.973d6505.css",
+    "static/js/main.da71c25b.js"
+  ]
+}

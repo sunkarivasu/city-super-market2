@@ -23,7 +23,13 @@ const parseJson = express.json({ extended: false });
 //     else
 //         console.log("connected");
 // });
-mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
+// mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
+//     if(err)
+//         console.log("Error while connecting to database:"+err);
+//     else
+//         console.log("conneted to database")
+// });
+mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net/CitySuperMarketDB?retryWrites=true&w=majority',{useNewUrlParser:true},(err) =>{
     if(err)
         console.log("Error while connecting to database:"+err);
     else
@@ -184,7 +190,12 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   //      });
   // });
 
-
+app.use(express.static(path.resolve('client', 'build')));
+// if (process.env.NODE_ENV === 'production') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve('client', 'build', 'index.html'));
+    });
+// }
 app.listen(PORT,console.log(`server is up and runnning on port ${PORT}`));
 
 // module.exports=upload;
