@@ -10,7 +10,7 @@ import * as faceapi from "face-api.js";
 import { useRef } from "react";
 import "../css/AdminLoginStylesheet.css"
 
-
+// adminLogin with face-recogization
 function AdminLogin()
 {
     var navigate = useNavigate();
