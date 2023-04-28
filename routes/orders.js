@@ -3,14 +3,53 @@ const { default: mongoose } = require("mongoose");
 var Order = require("../models/order.model");
 var Product = require("../models/product.model");
 var User = require("../models/user.model");
+var OrderProduct = require("../models/orderProduct.model");
+const { log } = require("async");
 
 
 router.route("/").get((req,res)=>
 {
-    Order.find({})
+    Order.aggregate([
+        {
+            $lookup:{
+                from:"users",
+                localField:"userId",
+                foreignField:"_id",
+                as:"userDetails",
+            }
+        },
+        {
+            $unwind:"$userDetails"
+        }
+    ])
     .then((orders)=>
     {
-        res.send(orders);
+        console.log(orders[0]['orderItems'].length);
+        orders.forEach((order) =>
+        {
+            for(var i=0;i<order['orderItems'].length;i++)
+            {
+                var orderProductId = order['orderItems'][i]
+                orderItemDetails = {}
+                OrderProduct.findById(orderProductId)
+                .then((orderProduct) => 
+                {
+                    orderItemDetails = orderProduct
+                    Product.findById(orderProduct['productId'])
+                    .then((product)=>
+                    {
+                        console.log(product);
+                        orderItemDetails = {product}
+                        orderItemDetails['quantity'] = orderProduct['quantity']
+                        orderItemDetails['orderQuantity'] = orderProduct['orderQuantity']
+                        order['orderItems'][i] = orderItemDetails
+                        console.log({orderItemDetails:orderItemDetails});
+                    })
+                    .catch((err) => console.log("Error occured while fetching product details",err))
+                }).catch((err) => console.log("Error occured while fetching orderProduct details",err))
+            }
+        })
+        res.send({...orders});
     })
     .catch((err) =>{
         res.status(400).send("Error:"+err)

@@ -41,7 +41,8 @@ var categoriesRouter = require("./routes/categories");
 var productRouter = require("./routes/products");
 var orderRouter = require("./routes/orders");
 var paymentRouter = require("./routes/payments");
-//var adminRouter = require("./routes/admin");
+var offerRouter = require("./routes/offers");
+var offerUserRouter = require("./routes/offerUsers");
 var multer = require("multer");
 const { param } = require("./routes/users");
 
@@ -52,7 +53,8 @@ app.use("/categories",categoriesRouter);
 app.use("/products",productRouter);
 app.use("/orders",orderRouter);
 app.use("/payments",paymentRouter);
-//app.use("/admin",adminRouter)
+app.use("/offers",offerRouter)
+app.use("/offerUsers",offerUserRouter)
 app.use(passport.initialize());
 
 if (process.env.NODE_ENV === 'production') {

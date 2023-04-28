@@ -1,0 +1,246 @@
+.main-container
+{
+    margin-top: 0px;
+}
+
+
+.offers-page
+{
+    width: 100%;
+    height:100%;
+    /* background-color: #F6C6EA; */
+    background-color: #ECF2FF;
+    padding:10px 0px;
+    font-family: 'Poppins-Bold';
+    /* padding: 0px 0px 100px 0px; */
+    text-align: center;
+    padding:60px 0px 30px 0px;
+}
+
+.offers-page .csm-heading 
+{
+    font-size: 20px;
+    margin: auto;
+    color: #576CBC;
+    
+}
+
+.winner-container, .winner-list-container
+{
+    margin:30px 0px;
+}
+
+.offers-page .description
+{
+    font-size: small;
+    opacity: 0.9;
+}
+
+.others
+{
+    opacity: 0.3;
+}
+
+.winner-declaration-heading
+{
+    font-weight: 600;
+    color: #066163;
+    font-size: medium;
+}
+
+.winner
+{
+    color: green;
+}
+
+
+.winner-image
+{
+    width: 100%;
+    margin: auto;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #C8B6E2;
+    background-color: #C8B6E2;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.winner-name
+{
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.winner-details
+{
+    text-align: left;
+    padding-left:10px;
+}
+
+.winner-div
+{
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+}
+
+.winner-component
+{
+    
+}
+
+.no-image
+{
+    color: #C689C6;
+    font-size: 80px;
+    text-align: center;
+}
+
+.digit
+{
+    background-color: #C689C6;
+    padding:5px;
+    border-radius: 5px;
+    margin:2px;
+    width: 30px;
+    height: 40px;
+    font-size: 20px;
+    color: white;
+}
+
+
+.digits
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.timmer
+{
+    justify-content: center;
+}
+
+.phoneNumber
+{
+    background-color: #C689C6;
+    color: white;
+    width: max-content;
+    margin: auto;
+    padding:5px;
+    border-radius: 5px;
+    height: 40px;
+    font-size: 20px;
+}
+
+.next-offer-div
+{
+    background-color: white;
+    border-radius: 10px;
+    text-align: left;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.next-offer-product-image
+{
+    background-color: #C8B6E2;
+    text-align: center;
+    width: 100%;
+    border-radius: 5px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-image
+{
+    width:100%;
+    height: 100%;
+}
+
+.product-name
+{
+    font-weight: 600;
+    font-size: 20px;
+    text-transform: capitalize;
+    letter-spacing: 0cap;
+    margin:10px 0px 0px 0px;
+}
+
+.product-worth{
+    margin-bottom: 0px;
+    color: #019267;
+    font-weight: 600;
+}
+
+.product-description
+{
+    margin-bottom: 0px;
+    opacity: 0.8;
+    font-size: medium;
+}
+
+.offer-details
+{
+    padding-left: 10px;
+}
+
+.section-heading
+{
+    color: #005555;
+    font-weight: 600;
+}
+
+.winner-date
+{
+    opacity: 0.8;
+}
+
+.carousel
+{
+    background-color: transparent;
+}
+
+.carousel-control-next-icon,.carousel-control-prev-icon
+{
+    background-color: transparent;
+}
+
+.next-offer
+{
+    margin-bottom: 50px;
+}
+
+.congratulations-container
+{
+    background-color: white;
+    padding: 10px;
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    margin-bottom: 30px;
+
+}
+
+.bouquet-image
+{
+    width:150px;
+    height: 150px;
+}
+
+.congrats-message
+{
+    margin-bottom: 0px;
+}
+
+.congratulations-container .winner-name
+{
+    margin-bottom: 0px;
+}

@@ -9,13 +9,15 @@ import AdminAddCategory from "./AdminAddCategory.component";
 import AdminUpdateCategory from "./AdminUpdateCategory.component";
 import AdminDeleteCategory from "./AdminDeleteCategory.component";
 import AdminShowAllProducts from "./AdminShowAllProducts.component";
+import AdminAddOffer from "./AdminAddOffer.component";
+import AdminAddOfferUser from "./AdminAddOfferUser.component";
 import axios from "axios";
 
 
 function AdminHome()
 {
     
-    var [showAllProducts,setShowAllProducts] = useState(true);
+    var [showAllProducts,setShowAllProducts] = useState(false);
 
     var [showAddProduct,setShowAddProduct] = useState(false);
     var [showUpdateProduct,setShowUpdateProduct] = useState(false);
@@ -26,6 +28,9 @@ function AdminHome()
     var [showDeleteCategory,setShowDeleteCategory] = useState(false);
 
     var [showAdminOptions,setShowAdminoptions] = useState(true);
+
+    var [showAddOffer,setShowAddOffer] = useState(true);
+    var [showAddOfferUser,setShowAddOfferUser] = useState(false);
 
 
     var [editProductId,setEditProductId] = useState(null);
@@ -38,12 +43,23 @@ function AdminHome()
     {
         // console.log(showUpdateProduct);
         var token = localStorage.getItem("token");
-        // console.log(token)
-        axios.get("/checkAdminToken",{headers:{Authorization:token}})
-            .then((res)=>{})
-            .catch((err) =>{navigate("../AdminLogin");});
+        if(token == null)
+        {
+            navigate("../AdminLogin");
+        }
+        else
+        {
+            axios.get("/checkAdminToken",{headers:{Authorization:token}})
+            .then((res)=>{
+                console.log(res.data);
+            })
+            .catch((err) =>{
+                navigate("../AdminLogin");});
         
         return  () => {}
+        }
+        // console.log(token)
+        
     },[showUpdateProduct]);
     
 
@@ -58,6 +74,8 @@ function AdminHome()
         setShowUpdateCategory(false);
         setShowDeleteCategory(false);
         setShowAllProducts(false);
+        setShowAddOffer(false);
+        setShowAddOfferUser(false);
     }
 
     function handleShowAllProducts()
@@ -107,7 +125,17 @@ function AdminHome()
         setShowDeleteCategory(true);
     }
 
+    function handleAddOffer()
+    {
+        resetOptions();
+        setShowAddOffer(true);
+    }
 
+    function handleAddOfferUser()
+    {
+        resetOptions();
+        setShowAddOfferUser(true);
+    }
 
     return (
             <div>
@@ -135,6 +163,8 @@ function AdminHome()
                         {showAddCategory && <AdminAddCategory/>}
                         {showUpdateCategory && <AdminUpdateCategory/>}
                         {showDeleteCategory && <AdminDeleteCategory/>}
+                        {showAddOffer && <AdminAddOffer/>}
+                        {showAddOfferUser && <AdminAddOfferUser/>}
                     </div>
                 </div>
             </div>
@@ -146,11 +176,6 @@ function AdminHome()
                 <ul className="navbar-nav ms-auto  mt-2 mt-lg-0">
                         <li className="nav-item active productDropDownMain">
                             <a className="nav-link admin-nav-link productDropDown dropDown" href="#" onClick={handleShowAllProducts}>Products</a>
-                            {/* <div className="productDropDownContent dropDownContent">
-                                <button className="dropDown-link btn" onClick={handleAddProduct}>Add product</button>
-                                <button className="dropDown-link btn" onClick={handleUpdateProduct}>Update Product</button>
-                                <button className="dropDown-link btn" onClick={handleDeleteProduct}>Delete Product</button>
-                            </div> */}
                         </li>
                         <li className="nav-item categoryDropDownMain">
                             <a className="nav-link admin-nav-link categoryDropDown dropDown" href="#">Category</a>
@@ -160,15 +185,12 @@ function AdminHome()
                                 <button className="dropDown-link btn" onClick={handleDeleteCategory}>Delete category</button>
                             </div>
                         </li>
-                        <li className="nav-item active productDropDownMain">
-                            
-                            {/* 
-                                <a className="nav-link admin-nav-link productDropDown dropDown" href="#">Orders</a>
-                                <div className="productDropDownContent dropDownContent">
-                                <button className="dropDown-link btn" onClick={handleAddProduct}>Add product</button>
-                                <button className="dropDown-link btn" onClick={handleUpdateProduct}>Update Product</button>
-                                <button className="dropDown-link btn" onClick={handleDeleteProduct}>Delete Product</button>
-                            </div> */}
+                        <li className="nav-item categoryDropDownMain">
+                            <a className="nav-link admin-nav-link categoryDropDown dropDown" href="#">Offers</a>
+                            <div className="categoryDropDownContent dropDownContent">
+                                <button className="dropDown-link btn" onClick={handleAddOffer}>Add offer</button>
+                                <button className="dropDown-link btn" onClick={handleAddOfferUser}>Add offer user</button>
+                            </div>
                         </li>
                 </ul>)
     }
