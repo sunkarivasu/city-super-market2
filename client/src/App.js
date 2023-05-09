@@ -18,6 +18,7 @@ import CheckOutPage from "./components/CheckOut.component.js";
 import PaymentCheckOutPage from "./components/PaymentCheckOut.component.js";
 import PaymentSuccessPage from "./components/PaymentSuccess.component.js"
 import PaymentFailurePage from "./components/PaymentFailure.component.js"
+import OffersPage from "./components/Offers.component.js"
 
 
 
@@ -48,6 +49,10 @@ function App() {
               {/* payments routes */}
               <Route path="/PAYMENTSUCCESS" element={<PaymentSuccessPage/>}/>
               <Route path="/PAYMENTFAILURE" element={<PaymentFailurePage/>}/>
+
+              {/* offers routes*/}
+              <Route path="/offers" element={<OffersPage/>}/>
+
 
 
 

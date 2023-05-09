@@ -1,5 +1,4 @@
 var mongoose = require("mongoose");
-// var {productSchema} = require("./product.model");
 
 var userSchema = new mongoose.Schema(
     {
@@ -7,16 +6,8 @@ var userSchema = new mongoose.Schema(
         password:String,
         emailId:String,
         phoneNumber:Number,
-        address:{
-            doorNumber:String,
-            streetName:String,
-            landMark:String,
-            village:String,
-            pincode:Number
-        },
-        cartItems:[
-            {productId:mongoose.ObjectId,orderQuantity:Number}
-        ],
+        address:mongoose.Schema.ObjectId,
+        cartItems:[ mongoose.Schema.ObjectId], 
         isAdmin:Boolean
     }
 );

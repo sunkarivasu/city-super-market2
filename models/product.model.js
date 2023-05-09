@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 
 var productSchema = new mongoose.Schema(
     {
+        productId:String,
         category:String,
         subCategory:String,
         image:String,
@@ -9,6 +10,7 @@ var productSchema = new mongoose.Schema(
         price:Number,
         description:String,
         discount:Number,
+        quantityType:String,
         quantity:Number
     }
 );

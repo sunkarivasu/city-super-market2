@@ -86,7 +86,7 @@ function AdminShowAllProducts(props)
                 <label style={{fontWeight:"500",fontSize:"1.1rem"}}>Category</label>
                 <select className="category-select" style={{width:"150px"}} value={category} onChange={handleChangeCategory}>
                 <option value="None">All</option>
-                {categoryList && categoryList.map((category) => {return <option value={category.categoryName}>{category.categoryName}</option>})}
+                {categoryList && categoryList.map((category,index) => {return <option value={category.categoryName} key={index}>{category.categoryName}</option>})}
                 </select>
             </div>
             <div>
@@ -94,7 +94,7 @@ function AdminShowAllProducts(props)
                     <label style={{fontWeight:"500",fontSize:"1.1rem"}}>Sub Category</label>
                     <select className="subCategory-select" style={{width:"250px"}} value={subCategory} onChange={handleChangeSubCategory}>
                         <option value="All">All</option>
-                        {subCategoryList && subCategoryList.map((subCategory) => {return <option value={subCategory}>{subCategory}</option>})}
+                        {subCategoryList && subCategoryList.map((subCategory,index) => {return <option value={subCategory} key={index}>{subCategory}</option>})}
                     </select>
                 </div>
                 <div className="navbar-category">
@@ -117,7 +117,7 @@ function AdminShowAllProducts(props)
         </div>
         <div className="subCategory-container">
             {products?<div>
-                {products.map((product) => {return <div className="productList-item row">
+                {products.map((product,index) => {return <div className="productList-item row" key={index}>
                     <div className="productList-item-img col-2">
                         <img src={product.image} style={{width:"80px",height:"80px"}}/>
                     </div>

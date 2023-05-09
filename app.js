@@ -8,7 +8,14 @@ var app = express();
 var cors =require("cors");
 var path = require("path");
 var fs = require("fs");
+const cron = require("node-cron");
+var Offer = require("./models/offer.model");
+var OfferUser = require("./models/offerUser.model");
 require("./config/passport");
+// var endOfDayfrom = require('date-fns/endOfDay');
+// var startOfDay =  require('date-fns/startOfDay')
+
+
 
 var checksum_lib = require("./Paytm/checksum");
 var config = require("./Paytm/config");
@@ -29,6 +36,87 @@ const parseJson = express.json({ extended: false });
 //     else
 //         console.log("conneted to database")
 // });
+
+cron.schedule("05 21 * * *",() =>
+{
+    mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net/CitySuperMarketDB?retryWrites=true&w=majority',{useNewUrlParser:true},(err) =>{
+    if(err)
+        console.log("Error while connecting to database:"+err);
+    else
+    {
+        console.log("conneted to database")
+        var presentDate = new Date();
+        var presentDateISO = new Date().toISOString();
+        console.log(presentDate,presentDateISO);
+        OfferUser.find(
+                // {
+                //     startDate:{$gte:presentDateISO},
+                //     endDate:{$lte:presentDateISO}
+                // }
+        )
+        .then((offerUsers) =>
+        {
+            console.log({offerUsers});
+            var numberOfUsers = offerUsers.length
+            if(numberOfUsers == 0)
+            {
+                console.log("No offer users found");
+            }
+            else
+            {
+                var winnerIndex = Math.floor(Math.random() * (numberOfUsers))
+                var winner = offerUsers[winnerIndex]
+                console.log("winner:",winner);
+                console.log("date:",presentDate);
+                Offer.find(
+                    {
+                        date:{
+                            $gte:startOfDay(new Date()),
+                            $lte:endOfDayfrom(new Date())
+                        }
+                    }
+                )
+                .then((offer) =>
+                {
+                    console.log({offer});
+                    if(!offer)
+                    {
+                        // send message to admin & developer that no offer is added
+                        console.log("No offer added...");
+                    }
+                    else
+                    {
+                        //send message to admin & developer that winner is genderated
+                        Offer.findOneAndUpdate({date:presentDate},{winnerName:winner.name,winnerPhoneNumber:winner.phoneNumber})
+                        .then(() =>
+                        {
+                            console.log("winner generated successfully...");
+                        })
+                        .catch((err) =>
+                        {
+                            console.log("Error occured while generating winner...",err);
+                        })
+                    }
+                })
+                .catch((err) =>
+                {
+                    console.log("Error occured while generating winner...",err);
+                })
+            }
+            
+        })
+        .catch((err) =>
+        {
+            console.log("Error occured while fetchnig offerUsers count",err);
+        })
+        
+    }
+
+    
+});
+})
+
+
 mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net/CitySuperMarketDB?retryWrites=true&w=majority',{useNewUrlParser:true},(err) =>{
     if(err)
         console.log("Error while connecting to database:"+err);
@@ -36,12 +124,16 @@ mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net
         console.log("conneted to database")
 });
 
+
+
 var usersRouter = require("./routes/users");
 var categoriesRouter = require("./routes/categories");
 var productRouter = require("./routes/products");
 var orderRouter = require("./routes/orders");
 var paymentRouter = require("./routes/payments");
-//var adminRouter = require("./routes/admin");
+var offerRouter = require("./routes/offers");
+var offerUserRouter = require("./routes/offerUsers");
+var normalOfferRouter = require("./routes/normalOffers");
 var multer = require("multer");
 const { param } = require("./routes/users");
 
@@ -52,7 +144,9 @@ app.use("/categories",categoriesRouter);
 app.use("/products",productRouter);
 app.use("/orders",orderRouter);
 app.use("/payments",paymentRouter);
-//app.use("/admin",adminRouter)
+app.use("/offers",offerRouter)
+app.use("/normalOffers",normalOfferRouter)
+app.use("/offerUsers",offerUserRouter)
 app.use(passport.initialize());
 
 if (process.env.NODE_ENV === 'production') {
