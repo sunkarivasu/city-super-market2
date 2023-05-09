@@ -4,11 +4,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 
 
-function AdminAddOfferUser()
+function AdminAddOfferUser(props)
 {
     var initialState ={
         name:"",
         phoneNumber:"",
+        noOfDays:"",
         nameErr:"init",
         phoneNumberErr:"init"
     }
@@ -28,15 +29,7 @@ function AdminAddOfferUser()
                 setCanBeSubmitted(false);
         }
 
-        function reset()
-        {
-            setForm(initialState);
-            // setAddSuccess(false);
-            // setAddFailure(false);
-            setCanBeSubmitted(false);
-            setAdd(false);
-            setCheckForm(false);
-        }
+        
       
         if(checkForm)
         {
@@ -44,37 +37,40 @@ function AdminAddOfferUser()
             setCheckForm(false)
         }
 
-        if(add)
-        {
-            var newOfferUser = {...form}
-            axios.post("/offerUsers/add",newOfferUser)
-            .then(() => {console.log("Offer added by admin")
-                        // setAddSuccess(true)
-                        // setAddFailure(false)
-                        toast.success("Offer added successfully",{position:toast.POSITION.BOTTOM_CENTER});
+    },[checkForm])
+
+
+    function reset()
+    {
+        setForm(initialState);
+        // setAddSuccess(false);
+        // setAddFailure(false);
+        setCanBeSubmitted(false);
+        setAdd(false);
+        setCheckForm(false);
+    }
+
+    function addOfferUSer()
+    {
+        axios.post("/offerUsers/add",{...form})
+        .then((res) => {console.log("Offer added by admin")
+                    // setAddSuccess(true)
+                    // setAddFailure(false)
+                    if(res.data.status)
+                    {
+                        toast.success("OfferUser added successfully",{position:toast.POSITION.BOTTOM_CENTER});
+                        props.handleShowAllOfferUsers()
                         reset();
-                        })
-            .catch((err) => {console.log("Error:"+err)
-                            // setAddFailure(true)
-                            // setAddSuccess(false)
-                            toast.error("Some Error occured. Please try again",{position:toast.POSITION.BOTTOM_CENTER});
-                        });
-            setAdd(false)
-        }
-
-        // if(addSuccess)
-        // {
-        //     toast.success("Offer added successfully",{position:toast.POSITION.BOTTOM_CENTER});
-        //     reset()
-        // }
-
-        // if(addFailure)
-        // {
-        //     toast.error("Some Error occured. Please try again",{position:toast.POSITION.BOTTOM_CENTER});
-        // }
-
-    // },[checkForm,addSuccess,add,addFailure])
-    },[checkForm,add])
+                    }
+                    else
+                    {
+                        toast.warning("Phone Number Already Exists",{position:toast.POSITION.BOTTOM_CENTER});
+                    }
+                    })
+        .catch((err) => {console.log("Error:"+err)
+                        toast.error("Some Error occured. Please try again",{position:toast.POSITION.BOTTOM_CENTER});
+                    });
+    }
 
 
     function handleChangeForm(event)
@@ -143,7 +139,11 @@ function AdminAddOfferUser()
                 <input type="text" className="form-control price"  onChange={handleChangeForm} id="phoneNumber" value={form.phoneNumber}/>
                 { form.phoneNumberErr.length>0 && form.phoneNumberErr!="init" && <p className="adminErr err">{form.phoneNumberErr}</p>}
             </div>        
-            { canBeSubmitted?<button type="button" className="btn btn-primary" onClick={() =>{setAdd(true)}}>Add</button>:<button type="button" className="btn btn-primary" disabled>Add</button>}
+            <div className="form-group">
+                <label htmlFor="noOfDays">Number Of Days</label>
+                <input type="text" className="form-control noOfDays"  onChange={handleChangeForm} id="noOfDays" value={form.noOfDays} placeholder="Default:30days"/>
+            </div>        
+            { canBeSubmitted?<button type="button" className="btn btn-primary" onClick={addOfferUSer}>Add</button>:<button type="button" className="btn btn-primary" disabled>Add</button>}
             {/* {addSuccess && <p className="successMsg">Offer User added Successfully</p>}
             {addFailure && <p className="failureMsg">Please Try Again</p>} */}
         </form>

@@ -5,80 +5,129 @@ import {BiImage} from "react-icons/bi";
 import HorizontalScrollMenu from 'react-horizontal-scrolling-menu';
 import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import "../css/offers.css";
+import axios  from "axios";
 
 
 
 function OffersPage()
 {
+    var resetStage = {
+        'isNormal':false,
+        'isRunning':false,
+        'isWaiting':false,
+        'isShowing':false,
+        'isDeclaring':false
+    }
+    var initialStage = {
+        ...resetStage,
+        'isNormal':true,
+    }
+
+    // var globalUpdateTime;
+
     var [previousWinner,setPreviousWinner] = useState(null);
-    var [nextOffer,setnextOffer] = useState(null);
+    var [nextOffer,setNextOffer] = useState(null);
     var [winnersList,setWinnersList] = useState([]);
     var [participantsList,setParticipantsList] = useState([]);
-    // var [hoursReamining,setHoursRemaining] = useState(0);
-    // var [minutesRemaining,setMinutesRemaining] = useState(0);
-    // var [secondsRemaining,setSecondsRemaining] = useState(0); 
+    var [stage,setStage] = useState(initialStage);
     var [timeRemaining,setTimeRemaining] = useState("00:00:00")
-    var [isSpinningTime,setIsSpinningTime] = useState(false);
     var [winner,setWinner] = useState(); 
     var [day,setDay] = useState("");
-    var [isResultsTime,setIsResultsTime] = useState(true);
+    var [normalOffers,setNormalOffers] = useState(null)
 
+
+    // initial required api calls
     useEffect(() =>
     { 
-        console.log({isResultsTime});
-        setPreviousWinner(
-            {
-                date:"22/04/2023",
-                name:"Sunkari Vasu",
-                phoneNumber:"9949566585"     
-            }
-        )
-        setnextOffer(
-            {
-                name:"jhonson's baby powder",
-                description:"suitable for childrens of age between 2-6",
-                // image:"https://firebasestorage.googleapis.com/v0/b/city-super-market.appspot.com/o/edddedasdasasdasd34%2Fimage?alt=media&token=871099ab-b496-47d8-8a0f-cc089e286281",
-                worth:"500"
-            }
-        )
-        setWinnersList([
-            {
-                date:"22/04/2023",
-                name:"Sunkari Vasu 1 ",
-                phoneNumber:"9949566585"     
-            },
-            {
-                date:"22/04/2023",
-                name:"Sunkari Vasu 2",
-                phoneNumber:"9949566585"     
-            },
-            {
-                date:"22/04/2023",
-                name:"Sunkari Vasu 3",
-                phoneNumber:"9949566585"     
-            },
-            {
-                date:"22/04/2023 efwer",
-                name:"Sunkari Vasu 4",
-                phoneNumber:"9949566585"     
-            }
+        // console.log({isResultsTime});
 
-        ])
+        axios.get("/offers/").then((res) =>
+        {
+            setWinnersList(res.data)
+        })
+        .catch((err) =>
+        {
+            console.log("Erroe occured while fetching offers ..",err);
+        })
+        
+        axios.get("/offerUsers/")
+        .then((res) =>
+        {
+            setParticipantsList(res.data)
+        })
+        .catch((err) =>
+        {
+            console.log("Error occured while fetching offeruser",err);
+        })
+
+        axios.get("offers/getTodaysOffer/")
+        .then((res) =>
+        {
+            setNextOffer(res.data)
+            console.log(res.data);
+        })
+        .catch((err) =>
+        {
+            console.log("Error occured while fetching today's offer",err);
+        })
+
+        axios.get("normalOffers/")
+        .then((res) =>
+        {
+            setNormalOffers(res.data)
+        })
+        .catch((err) =>
+        {
+            console.log("Error while fetching normal offers..",err);
+        })
+    },[])
+
+    useEffect(()=>
+    {
+        if(day === 'Yesterday')
+        {
+            console.log("fetching yesterday's winner");
+            var url = "/offers/getYesterdaysWinner"
+        }
+        else if (day == 'Today')
+        {
+            var url = "/offers/getTodaysWinner"
+        }
+        axios.get(url)
+            .then((res) =>
+            {
+                console.log(res.data);
+                setPreviousWinner({
+                    winnerName:res.data.winnerName,
+                    date:res.data.date,
+                    winnerPhoneNumber:res.data.winnerPhoneNumer,
+                    winnerImage:res.data.winnerImage
+                })
+            })
+            .catch((err) =>
+            {
+                console.log("Error occured while fetching yesterday's winner",err);
+            })
+    },[day])
+
+    // updating time for every second
+    useEffect(() =>
+    {
         var presentDate = new Date()
         console.log({presentDate});
         var hours = presentDate.getHours()
         if(hours>=17 && hours<24)
         {
-            setIsResultsTime(true);
+            setStage({...initialStage,'isDeclaring':true})
+            // setStage({...initialStage,'isNormal':true})
             setDay("Today");
         }
         else
         {
-            // setIsResultsTime(false);
-            setIsResultsTime(true);
+            setStage({...initialStage,'isNormal':true})
             setDay("Yesterday");
         }
-        if(presentDate.getHours()>=17)
+        if(hours>=17)
         {
             var nextDate = new Date(presentDate.getTime() + (24 * 60 * 60 * 1000))
             var nextDate = new Date(nextDate.getFullYear(),nextDate.getMonth(),nextDate.getDate(),17)
@@ -98,8 +147,9 @@ function OffersPage()
         var ss = Math.floor(msec / 1000);
         msec -= ss * 1000;
 
-        setInterval(()=>
+        var updateTime = setInterval(()=>
         {
+            console.log("updating time");
             checkIsSpinningTime(hh,mm,ss);
             if(ss == 0)
             {
@@ -123,6 +173,8 @@ function OffersPage()
             setTimeRemaining(convertToTwoLetters(hh)+":"+(convertToTwoLetters(mm))+":"+(convertToTwoLetters(ss)));
         },1000);
 
+        // globalUpdateTime = updateTime
+
         var convertToTwoLetters = (time) => 
         {
             return time.toString().length==2?(time.toString()):("0"+time.toString()) 
@@ -131,157 +183,191 @@ function OffersPage()
         var checkIsSpinningTime = () =>
         {
             if (hh == 0 && mm == 0 & ss == 0)
+            // if (true)
             {
-                setIsSpinningTime(true)
+                console.log("its running time.. huhuhu..");
+                clearInterval(updateTime);
+                setStage({...resetStage,"isRunning":true});
+                // setStage({...resetStage,"isWaiting":true});
+                // setStage({...resetStage,"isShowing":true});
             }
         }
-
-        // array shuffling should be done at backend
-        var shuffleArray = (array)  => {
-            for (let i = array.length - 1; i > 0; i--) {
-              const j = Math.floor(Math.random() * (i + 1));
-              [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-          }
-
-        setParticipantsList([
-            {
-                phoneNumber:"1234534343"
-            },
-            {
-                phoneNumber:"2423223356"
-            },
-            {
-                phoneNumber:"3956347890"
-            },
-            {
-                phoneNumber:"9949566585"
-            },
-            {
-                phoneNumber:"2679534567"
-            },
-            {
-                phoneNumber:"9456784329"
-            },
-            {
-                phoneNumber:"7386405112"
-            },
-            {
-                phoneNumber:"8949566585"
-            },
-            {
-                phoneNumber:"9059186409"
-            },
-            {
-                phoneNumber:"6300028491"
-            },
-            {
-                phoneNumber:"9546789540"
-            }]); 
-            setIsSpinningTime(true)
     },[])
 
-    useEffect(()=>
+    // clear interval if stage['isNormal'] == false
+    useEffect(() =>
     {
-        console.log("changing isSpinninnTime",isSpinningTime);
-        console.log(participantsList);
-        var rotateArray = (array) =>
+        console.log("stage changed..",stage);
+
+        // if(stage['isNormal'] === false)
+        // {
+        //     clearInterval(globalUpdateTime)
+        // }
+    },[stage])
+
+    //to show the Running screen only for 10 seconds
+    useEffect(() =>
+    {
+        if(stage['isRunning'])
         {
-            var firstElement = array.shift();
-            array.push(firstElement);
-            return array;
+            setTimeout(()=>
+            {
+                setStage({...resetStage,"isRunning":false,"isWaiting":true});
+            },10000)
         }
+    },[stage])
 
-        if(isSpinningTime && participantsList)
+    //to show the waiting screen only for 12 seconds
+    useEffect(() =>
+    {
+        if(stage['isWaiting'])
         {
-            var arr1 = [1,2,3,4]
-            setTimeout(() =>
+            setTimeout(()=>
             {
-
-                clearInterval(rotateList);
-                setIsSpinningTime(false);
-            },10000);
-
-            var rotateList = setInterval(()=>
-            {
-                selectRandomwinner();
-            },10);
-
-            var selectRandomwinner = () =>
-            {
-                var randomNumber = Math.floor(participantsList.length*Math.random());
-                console.log(participantsList[randomNumber]);
-                setWinner(participantsList[randomNumber])
-            }
-
+                setStage({...resetStage,"isWaiting":false,"isShowing":true})
+            },12000)
         }
-    },[isSpinningTime])
+    },[stage])
+
+    // to show the showing screen only for 10 minutes
+    useEffect(() =>
+    {
+        if(stage['isShowing'])
+        {
+            setTimeout(()=>
+            {
+                setStage({...resetStage,"isShowing":false,"isDeclaring":true})
+            },10000)
+            // },10*60*1000)
+        }
+    },[stage])
 
     return <div className="offers-page">
-            {nextOffer && <div className="container">
+            {stage['isRunning'] === true?<GeneratingWinnerResponse/>
+            :stage['isWaiting']?<WaitingTimeContainer winnerNumber={[9,9,4,9,5,6,6,5,8,5]}/>
+            :stage['isShowing']?<ShowResult/>
+            :<div className="container">
                 <div className="top-heading">
                     <div className="csm-heading">
-                        <b>CITY SUPER MARKET</b> 
+                        <b><img className="csm-logo" src="images/offers/csm-logo.jpg"/> CITY SUPER MARKET</b> 
                     </div>
                     <div className="one-rupee-heading">
                         <b className="">ONE RUPEE OFFER</b> 
                     </div>
                     <p className="description">Just pay 30 Rupees to be a member of this offer for 1 month</p>
                 </div>
-                {isResultsTime?
+                <div className="normal-offers-container">
+                <h5>Special offers only for you</h5>
+                <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
+                        <div className="carousel-inner">
+                            {normalOffers && normalOffers.map((offer,index) =>
+                                {
+                                    console.log(offer);
+                                    return <div className={index == 0?"carousel-item active":"carousel-item"} key={index}>
+                                        <OfferComponent offer={offer}/>
+                                    </div>
+                                    // return <div className="normal-offer">
+                                    //     <div className="offer-image">
+                                    //         <img src={offer.image}/>
+                                    //     </div>
+                                    //     <div className="offer-productName">
+                                    //         <p>{offer.productName}</p>
+                                    //     </div>
+                                    //     <div className="offer-mrp">
+                                    //         <p>{offer.price}</p>
+                                    //     </div>
+                                    // </div>
+                                })
+                            }
+                            {/* {winnersList.slice(0).reverse().map((winner,index) =>{
+                                if(index == 0)
+                                {
+                                    return <></>
+                                }
+                                else if (index == 1)
+                                {
+                                    return <div className="carousel-item active">
+                                    <WinnerComponent winner={winnersList[1]}/>
+                                </div>
+                                }
+                                else
+                                {
+                                    return <div className="carousel-item" key={index}>
+                                    <WinnerComponent winner={winner}/>
+                                    </div>
+                                }
+                                
+                            })} */}
+                        </div>  
+                        <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span className="sr-only">Previous</span>
+                        </a>
+                        <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span className="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+                {stage['isDeclaring']?
                 <CongratulationsContainer/>
-                :(isSpinningTime?
-                    <div className="spinning-time">
-                        <p className="winner-declaration-heading">Declaring winner by spining</p>
-                        <div className="winner-declaration-container">
-                            {winner && <Digits numbers={winner.phoneNumber}/>}
-                        </div>
-                    </div>:
+                // 
+                :
                     <div className="timmer">
                         <p className="winner-declaration-heading">Today's winner will be declared in</p>
                         <Digits numbers={timeRemaining}/>
-                    </div>)
+                    </div>
+                    // )
                 }
                 {/* <hr/> */}
                 <div className="next-offer">
                     <h5 className="section-heading">Today's offer</h5>
                     <div className="next-offer-div">
-                        <div className="next-offer-product-image">
-                            {nextOffer.image ? <img src={nextOffer.image}></img> :<BiImage className="no-image vertical-center"/>}
+                        <div className="next-offer-product-image offer-product-image">
+                            {nextOffer ? <img src={nextOffer.image}/>:<BiImage className="no-image vertical-center"/>}
                         </div>
                         <div className="offer-details">
-                            <p className="product-name">{nextOffer.name}</p>
-                            <p className="product-description">{nextOffer.description}</p>
-                            <p className="product-worth">RS {nextOffer.worth}</p>
+                            <p className="product-name">{nextOffer?nextOffer.productName:""}</p>
+                            <p className="product-description">{nextOffer?nextOffer.description:""}</p>
+                            <p className="product-worth">RS {nextOffer?nextOffer.worth:""}</p>
                         </div>
                     </div>
                 </div>
-                {/* <hr/> */}
                 <div className="winner-container">
                     <h5 className="section-heading">{day}'s Winner</h5>
                     <WinnerComponent winner={previousWinner}/>
                 </div>
-                {/* <hr/> */}
                 <div className="winner-list-container">
                     <h5 className="section-heading">Previous Winners</h5>
                     <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
                         <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <WinnerComponent winner={winnersList[0]}/>
-                            </div>
-                            {winnersList.map((winner,index) =>{
-                                return <div className="carousel-item" key={index}>
-                                    <WinnerComponent winner={winner}/>
+                           
+                            {winnersList.slice(0).reverse().map((winner,index) =>{
+                                if(index == 0)
+                                {
+                                    return <></>
+                                }
+                                else if (index == 1)
+                                {
+                                    return <div className="carousel-item active">
+                                    <WinnerComponent winner={winnersList[1]}/>
                                 </div>
+                                }
+                                else
+                                {
+                                    return <div className="carousel-item" key={index}>
+                                    <WinnerComponent winner={winner}/>
+                                    </div>
+                                }
+                                
                             })}
                         </div>  
                         <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span className="sr-only">Previous</span>
                         </a>
                         <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
                             <span className="sr-only">Next</span>
                         </a>
                     </div>
@@ -293,17 +379,44 @@ function OffersPage()
 
 function WinnerComponent(props)
 {
+    if(props.winner)
+        console.log(props.winner.winnerImage);
     return <div className="winner-component">
         <div className="winner-div">
-            <div className="winner-image">
+            <div className="winner-image offer-product-image">
                 {
-                props.winner.imageUrl ? <img src={props.winner.imageUrl}></img> :
+                props.winner && props.winner.winnerImage ? <img src={props.winner.winnerImage}></img> :
                 <BiImage className="no-image"/>
                 }
             </div>
             <div className="winner-details">
-                <div className="winner-name">{props.winner.name}</div>
-                <div className="winner-date">{props.winner.date}</div>
+                <div className="winner-name">{props.winner && props.winner.winnerName}</div>
+                <div className="winner-date">{props.winner && props.winner.date.slice(0,10)}</div>
+            </div>
+        </div>
+     </div>
+} 
+
+function OfferComponent(props)
+{
+    if(props.offer)
+        console.log(props.offer.image);
+    return <div className="winner-component">
+        <div className="winner-div">
+            <div className="winner-image offer-product-image">
+                {
+                props.offer && props.offer.image ? <img src={props.offer.image}></img> :
+                <BiImage className="no-image"/>
+                }
+            </div>
+            <div className="winner-details">
+                <div className="winner-name">{props.offer && props.offer.productName}</div>
+                {/* <div className="winner-date">{props.offer && props.offer.price}</div> */}
+                <div className="price">
+                    <p className="item-priceAfterDiscount col-6">RS {props.offer && Math.round(props.offer.price*(100-props.offer.discount)/100)}</p>
+                    {props.offer &&  props.offer.discount>0 && <p className="item-price col-6">RS {props.offer.price}</p>}
+                </div>
+                <p className="item-description">{props.offer && props.offer.description}</p>
             </div>
         </div>
      </div>
@@ -315,11 +428,11 @@ function Digits(props)
     if(props.numbers.length !== 10)
     {
         return <div className="digits">
-        {props.numbers.split("").map((number) =>
+        {props.numbers.split("").map((number,i) =>
         {
             if(number === ":")
                 return ":"
-            return <div className="digit">
+            return <div className="digit" key={i}>
                 <p>{number}</p>
             </div>
         })}
@@ -346,6 +459,90 @@ function CongratulationsContainer()
     </div>)
 
 }
+
+function GeneratingWinnerResponse()
+{
+    return <div className="generating-winner-container">
+         <img src="images/offers/running.gif"></img>
+         <div className="generating-text">
+            Declaring Winner
+         </div>
+</div>
+}
+
+function WaitingTimeContainer(props)
+{
+    var winnerPhoneNumber = props.winnerNumber
+    var [revealedNumber,setRevealedNumber] = useState([0,0,0,0,0,0,0,0,0,0])
+    
+    useEffect( () =>
+    {
+        console.log('re-rendering...');
+        // for (var i=0;i<10;i++)
+        //     {
+                var i = 0
+                var revealNumberSlowly = setInterval(()=>
+                {
+                    var j = Math.floor(Math.random() * (10));
+                    var nums = revealedNumber
+                    nums[i] = j 
+                    console.log(revealedNumber);
+                    setRevealedNumber([...nums])
+                },50);
+
+                var changeIndex = setInterval(()=>
+                {
+                    var nums = revealedNumber
+                    nums[i] = winnerPhoneNumber[i]
+                    setRevealedNumber([...nums])
+                    i += 1 
+                    // clearInterval(revealNumberSlowly)
+                },1000)
+
+                setTimeout(() =>
+                {
+                    clearInterval(revealNumberSlowly)
+                    clearInterval(changeIndex);
+                },10000)
+                
+            // }
+
+        // var revealWinner = async () =>
+        // {
+
+        // }
+    },[])
+
+    useEffect(() =>
+    {
+        console.log("number revealed");
+    },[revealedNumber])
+
+    return <div className="waiting-time-container">
+        <div className="winnner-phone-number">
+            {revealedNumber.map((number,i) =>
+            {
+                return <div key={i} className="winner-each-number">{number?number:"-"}</div>
+            })}
+        </div>
+        <img src="images/offers/working.gif"></img>
+    </div>
+}
+
+function ShowResult()
+{
+    return <div className="showing-time-container">
+        <Confetti numberOfPieces={100}></Confetti>
+        <img className="bouquet-image" src="images/offers/success.gif"/>
+        <div className="congrats-message">
+            <p>Congratulations</p>
+        </div>
+        <div className="winner">
+            <p>Sunkari Vasu</p>
+        </div>
+    </div>
+}
+
 
 
 export default OffersPage

@@ -7,6 +7,12 @@ var offerSchema = new mongoose.Schema(
         image:String,
         worth:Number,
         date:Date,
+        winnerName:String,
+        winnerPhoneNumber:{
+            type:String,
+            default:""
+        },
+        winnerImage:String
     }
 );
 

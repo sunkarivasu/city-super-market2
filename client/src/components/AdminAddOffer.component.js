@@ -6,7 +6,7 @@ import {ref,uploadBytes,getDownloadURL} from "firebase/storage";
 import axios from "axios";
 
 
-function AdminAddOffer()
+function AdminAddOffer(props)
 {
 
     var initialState ={
@@ -108,6 +108,7 @@ function AdminAddOffer()
         {
             toast.success("Offer added successfully",{position:toast.POSITION.BOTTOM_CENTER});
             reset()
+            props.handleShowAllOffers()
         }
 
         if(addFailure)

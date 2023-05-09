@@ -1076,6 +1076,7 @@ body{
 {
     width:400px;
     margin:auto;
+    margin-top: 50px;
     background-color: #fff;
     padding:30px;
     border-radius: 5px;
@@ -1333,6 +1334,12 @@ body{
     display: flex;
     justify-content: right;
     padding:0% 10%;
+    margin-top:50px;
+}
+
+.admin-add-product-home-btn
+{
+    margin-right:10px
 }
 
 /* .adminShowAllProducts-navbar,.productList-titles
@@ -1385,6 +1392,12 @@ body{
     border-radius: 5px;
     /* display: flex;
     justify-content:space-around ; */
+}
+
+/* adminShowAllOffers */
+.phoneNumber-filter-input
+{
+    margin-left:10px;
 }
 
 /* .productList-item-edit-btn,.productList-item-delete-btn

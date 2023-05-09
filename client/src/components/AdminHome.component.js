@@ -9,7 +9,14 @@ import AdminAddCategory from "./AdminAddCategory.component";
 import AdminUpdateCategory from "./AdminUpdateCategory.component";
 import AdminDeleteCategory from "./AdminDeleteCategory.component";
 import AdminShowAllProducts from "./AdminShowAllProducts.component";
+import AdminShowAllOffers from "./AdminShowAllOffers.component";
+import AdminShowAllNormalOffers from "./AdminShowAllNormalOffers.component";
+import AdminShowAllOfferUsers from "./AdminShowAllOfferUsers.component";
+import AdminUpdateOffer from "./AdminUpdateOffer.component";
+import AdminUpdateOfferUser from "./AdminUpdateOfferUser.component";
+import AdminUpdateNormalOffer from "./AdminUpdateNormalOffer.component";
 import AdminAddOffer from "./AdminAddOffer.component";
+import AdminAddNormalOffer from "./AdminAddNormalOffer.component";
 import AdminAddOfferUser from "./AdminAddOfferUser.component";
 import axios from "axios";
 
@@ -22,6 +29,8 @@ function AdminHome()
     var [showAddProduct,setShowAddProduct] = useState(false);
     var [showUpdateProduct,setShowUpdateProduct] = useState(false);
     var [showDeleteProduct,setShowDeleteProduct] = useState(false);
+    var [editProductId,setEditProductId] = useState(null);
+
 
     var [showAddCategory,setShowAddCategory] = useState(false);
     var [showUpdateCategory,setShowUpdateCategory] = useState(false);
@@ -29,13 +38,21 @@ function AdminHome()
 
     var [showAdminOptions,setShowAdminoptions] = useState(true);
 
-    var [showAddOffer,setShowAddOffer] = useState(true);
+    var [showAllOffers,setShowAllOffers] = useState(true);
+
+    var [showAddOffer,setShowAddOffer] = useState(false);
+    var [showUpdateOffer,setShowUpdateOffer] = useState(false);
+    var [editOfferId,setEditOfferId] = useState(null)
+
+    var [showAllNormalOffers,setShowAllNormalOffers] = useState(false)
+    var [showAddNormalOffer,setShowAddNormalOffer] = useState(false)
+    var [showUpdateNormalOffer,setShowUpdateNormalOffer] = useState(false);
+    var [editNormalOfferId,setEditNormalOfferId] = useState(null);
+
+    var [showAllOfferUsers,setShowAllOfferUsers] = useState(false)
     var [showAddOfferUser,setShowAddOfferUser] = useState(false);
-
-
-    var [editProductId,setEditProductId] = useState(null);
-
-    
+    var [showUpdateOfferUser,setShowUpdateOfferUser] = useState(false);
+    var [editOfferUserId,setEditOfferUserId] = useState(false);
 
     var navigate = useNavigate();
 
@@ -75,13 +92,32 @@ function AdminHome()
         setShowDeleteCategory(false);
         setShowAllProducts(false);
         setShowAddOffer(false);
+        setShowAllOffers(false);
+        setShowUpdateOffer(false);
+        setShowUpdateNormalOffer(false);
+        setShowAllNormalOffers(false);
+        setShowAddNormalOffer(false);
         setShowAddOfferUser(false);
+        setShowUpdateOfferUser(false);
+        setShowAllOfferUsers(false)
     }
 
     function handleShowAllProducts()
     {
         resetOptions()
         setShowAllProducts(true);
+    }
+
+    function handleShowAllOffers()
+    {
+        resetOptions()
+        setShowAllOffers(true);
+    }
+
+    function handleShowAllOfferUsers()
+    {
+        resetOptions()
+        setShowAllOfferUsers(true);
     }
 
 
@@ -113,14 +149,12 @@ function AdminHome()
 
     function handleUpdateCategory()
     {
-        // console.log("Hi");
         resetOptions()
         setShowUpdateCategory(true);
     }
 
     function handleDeleteCategory()
     {
-        // console.log("Hi");
         resetOptions()
         setShowDeleteCategory(true);
     }
@@ -131,11 +165,47 @@ function AdminHome()
         setShowAddOffer(true);
     }
 
+    function handleAddNormalOffer()
+    {
+        resetOptions();
+        setShowAddNormalOffer(true);
+    }
+
     function handleAddOfferUser()
     {
         resetOptions();
         setShowAddOfferUser(true);
     }
+
+    function handleUpdateOffer(id)
+    {
+        console.log(id);
+        resetOptions()
+        setEditOfferId(id);
+        setShowUpdateOffer(true);
+    }
+
+    function handleUpdateOfferUser(id)
+    {
+        console.log(id);
+        resetOptions()
+        setEditOfferUserId(id);
+        setShowUpdateOfferUser(true);
+    }
+    function handleUpdateNormalOffer(id)
+    {
+        console.log(id);
+        resetOptions()
+        setEditNormalOfferId(id);
+        setShowUpdateNormalOffer(true);
+    }
+
+    function handleShowAllNormalOffers()
+    {
+        resetOptions();
+        setShowAllNormalOffers(true);
+    }
+
 
     return (
             <div>
@@ -163,8 +233,16 @@ function AdminHome()
                         {showAddCategory && <AdminAddCategory/>}
                         {showUpdateCategory && <AdminUpdateCategory/>}
                         {showDeleteCategory && <AdminDeleteCategory/>}
-                        {showAddOffer && <AdminAddOffer/>}
-                        {showAddOfferUser && <AdminAddOfferUser/>}
+                        {showAllOffers && <AdminShowAllOffers handleAddOffer={handleAddOffer} handleAddOfferUser={handleAddOfferUser} handleEditOffer={handleUpdateOffer}/>}
+                        {showUpdateOffer && <AdminUpdateOffer offerId={editOfferId} handleShowAllOffers={handleShowAllOffers} />}
+                        {showAddOffer && <AdminAddOffer handleShowAllOffers={handleShowAllOffers}/>}
+                        {showAllNormalOffers && <AdminShowAllNormalOffers handleAddNormalOffer={handleAddNormalOffer} handleEditNormalOffer={handleUpdateNormalOffer}/>}
+                        {showAddNormalOffer && <AdminAddNormalOffer handleShowAllNormalOffers={handleShowAllNormalOffers}/>}
+                        {showUpdateNormalOffer && <AdminUpdateNormalOffer offerId={editNormalOfferId} handleShowAllNormalOffers={handleShowAllNormalOffers}/>}
+                        {showAllOfferUsers && <AdminShowAllOfferUsers handleAddOfferUser={handleAddOfferUser} handleEditOfferUser={handleUpdateOfferUser}/>}
+                        {showAddOfferUser && <AdminAddOfferUser handleShowAllOfferUsers={handleShowAllOfferUsers}/>}
+                        {showUpdateOfferUser && <AdminUpdateOfferUser offerUserId={editOfferUserId} handleShowAllOfferUsers={handleShowAllOfferUsers}/>}
+
                     </div>
                 </div>
             </div>
@@ -186,11 +264,13 @@ function AdminHome()
                             </div>
                         </li>
                         <li className="nav-item categoryDropDownMain">
-                            <a className="nav-link admin-nav-link categoryDropDown dropDown" href="#">Offers</a>
-                            <div className="categoryDropDownContent dropDownContent">
-                                <button className="dropDown-link btn" onClick={handleAddOffer}>Add offer</button>
-                                <button className="dropDown-link btn" onClick={handleAddOfferUser}>Add offer user</button>
-                            </div>
+                            <a className="nav-link admin-nav-link categoryDropDown dropDown" href="#" onClick={handleShowAllOffers}>Offers</a>
+                        </li>
+                        <li className="nav-item categoryDropDownMain">
+                            <a className="nav-link admin-nav-link categoryDropDown dropDown" href="#" onClick={handleShowAllNormalOffers}>Normal Offers</a>
+                        </li>
+                        <li className="nav-item categoryDropDownMain">
+                            <a className="nav-link admin-nav-link categoryDropDown dropDown" href="#" onClick={handleShowAllOfferUsers}>OfferUsers</a>
                         </li>
                 </ul>)
     }
