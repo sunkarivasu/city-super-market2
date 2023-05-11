@@ -350,7 +350,7 @@ function OffersPage()
                                 else if (index == 1)
                                 {
                                     return <div className="carousel-item active">
-                                    <WinnerComponent winner={winnersList[1]}/>
+                                    <WinnerComponent winner={winner}/>
                                 </div>
                                 }
                                 else

@@ -17,19 +17,19 @@ router.route("/add").post((req,res)=>
 {
     console.log(req.body);
     var today = new Date();
+    var todaysTime = today.getTime();
     var time = today.getHours()
-    var startDate = today 
+    var startDate = new Date(todaysTime - (todaysTime%(1000 * 60 * 60 * 24)))
     var noOfDays = 30
     if(req.body.noOfDays !== "")
         noOfDays = parseInt(req.body.noOfDays)
     console.log(time);
-    if(time<17)
+    if(time>17)
     { 
         console.log({time});
-        startDate = new Date((today.getTime() + (1000 * 60 * 60 * 24)));
-        startDate = new Date(startDate.getFullYear(),startDate.getMonth(),startDate.getDate())
+        startDate = new Date(startDate.getTime() + (1000 * 60 * 60 * 24));
     }
-    endDate = new Date(startDate.getTime() + (noOfDays * 1000 * 60 * 60 * 24))
+    endDate = new Date(startDate.getTime() + (noOfDays * 1000 * 60 * 60 * 24) - (1000 * 60 ))
     console.log(startDate,endDate);
     var newOfferUser = new OfferUser ({
         name:req.body.name,
@@ -77,13 +77,26 @@ router.route("/updateOfferUserDetails/").put((req,res) =>
             }
             else
             {
-                var newStartDate =  new Date();
-                var newEndDate = new Date(newStartDate.getTime()+(parseInt(req.body.noOfDays)*24*60*60*1000))
+                var today = new Date();
+                var todaysTime = today.getTime();
+                var time = today.getHours()
+                var newStartDate = new Date(todaysTime - (todaysTime%(1000 * 60 * 60 * 24)))
+                var noOfDays = 30
+                if(req.body.noOfDays !== "")
+                    noOfDays = parseInt(req.body.noOfDays)
+                console.log(time);
+                if(time>17)
+                { 
+                    console.log({time});
+                    newStartDate = new Date(newStartDate.getTime() + (1000 * 60 * 60 * 24));
+                }
+                newEndDate = new Date(newStartDate.getTime() + (noOfDays * 1000 * 60 * 60 * 24) - (1000 * 60 ))
+                console.log(newStartDate,newEndDate);
             }
             console.log(newEndDate,newStartDate);
             OfferUser.findByIdAndUpdate(req.body._id,{name:req.body.name,phoneNumber:req.body.phoneNumber,startDate:newStartDate,endDate:newEndDate})
             .then(() => {console.log("OfferUser updated successfully");res.send({})})
-            .catch((err) => {console.log("Error Occured While updating offerUser details");})
+            .catch((err) => {console.log("Error Occured While updating offerUser details",err);})
         })
         .catch((err) =>
         {
