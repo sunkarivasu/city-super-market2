@@ -11,12 +11,17 @@ router.route("/").get((req,res)=>
 
 router.route("/add").post((req,res)=>
 {
+    var todaysTime = new Date().getTime()
+    console.log(todaysTime);
+    var todaysDate = new Date(todaysTime - (todaysTime%(1000*60*60*24)))
+    console.log(new Date(todaysTime - (todaysTime%(1000*60*60*24))));
+    console.log(new Date(todaysTime - (todaysTime%(1000*60*60*24))) + (1000*60*60*5.5));
     var newOffer = new Offer ({
         productName:req.body.productName,
         worth:req.body.price,
         description:req.body.description,
         image:req.body.image,
-        date:new Date()
+        date:todaysDate,
     });
     console.log(newOffer);
     newOffer.save()

@@ -5,7 +5,11 @@ var offerUserSchema = new mongoose.Schema(
         name:String,
         phoneNumber:Number,
         startDate:Date,
-        endDate:Date
+        endDate:Date,
+        alreadyWinner:{
+            default:false,
+            type:Boolean
+        }
     }
 );
 

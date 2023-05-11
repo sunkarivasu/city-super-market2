@@ -12,8 +12,7 @@ const cron = require("node-cron");
 var Offer = require("./models/offer.model");
 var OfferUser = require("./models/offerUser.model");
 require("./config/passport");
-// var endOfDayfrom = require('date-fns/endOfDay');
-// var startOfDay =  require('date-fns/startOfDay')
+
 
 
 
@@ -37,7 +36,7 @@ const parseJson = express.json({ extended: false });
 //         console.log("conneted to database")
 // });
 
-cron.schedule("05 21 * * *",() =>
+cron.schedule("40 16 * * *",() =>
 {
     mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net/CitySuperMarketDB?retryWrites=true&w=majority',{useNewUrlParser:true},(err) =>{
     if(err)
@@ -49,10 +48,15 @@ cron.schedule("05 21 * * *",() =>
         var presentDateISO = new Date().toISOString();
         console.log(presentDate,presentDateISO);
         OfferUser.find(
-                // {
-                //     startDate:{$gte:presentDateISO},
-                //     endDate:{$lte:presentDateISO}
-                // }
+            {
+                endDate:{
+                    $gte:presentDate
+                },
+                startDate:{
+                    $lte:presentDate
+                },
+                alreadyWinner:false
+            }
         )
         .then((offerUsers) =>
         {
@@ -68,17 +72,28 @@ cron.schedule("05 21 * * *",() =>
                 var winner = offerUsers[winnerIndex]
                 console.log("winner:",winner);
                 console.log("date:",presentDate);
-                Offer.find(
+                var exactOffer;
+                var todayTime = new Date().getTime()
+                var startOfToday = new Date(todayTime - (todayTime%(1000*60*60*24)))
+                console.log({startOfToday});
+                Offer.findOne(
                     {
-                        date:{
-                            $gte:startOfDay(new Date()),
-                            $lte:endOfDayfrom(new Date())
-                        }
+                        date:startOfToday,
                     }
                 )
                 .then((offer) =>
                 {
                     console.log({offer});
+                    // for(var i=0;i<offers.length;i++)
+                    // {
+                    //     var todayTime = new Date().getTime()
+                    //     var endOfToday = (startOfToday + (1000*60*60*24))
+                    //     if(offers[i].date.getTime() >= startOfToday && offers[i].date.getTime() <= endOfToday)
+                    //     {
+                    //         exactOffer = offers[i]
+                    //         break
+                    //     }
+                    // }
                     if(!offer)
                     {
                         // send message to admin & developer that no offer is added
@@ -87,10 +102,21 @@ cron.schedule("05 21 * * *",() =>
                     else
                     {
                         //send message to admin & developer that winner is genderated
-                        Offer.findOneAndUpdate({date:presentDate},{winnerName:winner.name,winnerPhoneNumber:winner.phoneNumber})
+                        Offer.findOneAndUpdate({date:startOfToday},{winnerName:winner.name,winnerPhoneNumber:winner.phoneNumber})
                         .then(() =>
                         {
-                            console.log("winner generated successfully...");
+                            OfferUser.findOneAndUpdate({
+                                   _id:winner._id 
+                            },{
+                                alreadyWinner:true
+                            })
+                            .then((res) =>{
+                                console.log("alreadyWinner attribute is set");
+                                console.log("winner generated successfully...");
+                            })
+                            .catch((err) =>{
+                                console.log("Error occured while setting alreadyWinner attribute..",err);
+                            })
                         })
                         .catch((err) =>
                         {
@@ -136,6 +162,7 @@ var offerUserRouter = require("./routes/offerUsers");
 var normalOfferRouter = require("./routes/normalOffers");
 var multer = require("multer");
 const { param } = require("./routes/users");
+const { log } = require("async");
 
 app.use(cors());
 app.use(express.json())
