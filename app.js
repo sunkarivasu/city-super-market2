@@ -38,7 +38,7 @@ const parseJson = express.json({ extended: false });
 
 cron.schedule("40 16 * * *",() =>
 {
-    mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net/CitySuperMarketDB?retryWrites=true&w=majority',{useNewUrlParser:true},(err) =>{
+    mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
     if(err)
         console.log("Error while connecting to database:"+err);
     else
@@ -141,7 +141,6 @@ cron.schedule("40 16 * * *",() =>
     
 });
 })
-
 
 mongoose.connect('mongodb+srv://admin-vasu:vasu%40143@cluster0.ypfh3.mongodb.net/CitySuperMarketDB?retryWrites=true&w=majority',{useNewUrlParser:true},(err) =>{
     if(err)
