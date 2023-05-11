@@ -22,20 +22,6 @@ var config = require("./Paytm/config");
 const parseUrl = express.urlencoded({ extended: false });
 const parseJson = express.json({ extended: false });
 
-// mongoose.connect("mongodb://localhost:27017/CitySuperMarketDB",function(err)
-// {
-//     if(err)
-//         console.log("error"+err);
-//     else
-//         console.log("connected");
-// });
-// mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
-//     if(err)
-//         console.log("Error while connecting to database:"+err);
-//     else
-//         console.log("conneted to database")
-// });
-
 cron.schedule("40 16 * * *",() =>
 {
     mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
@@ -142,12 +128,23 @@ cron.schedule("40 16 * * *",() =>
 });
 })
 
+// for remote connection
 mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
     if(err)
         console.log("Error while connecting to database:"+err);
     else
         console.log("conneted to database")
 });
+
+
+// for local connection
+// mongoose.connect("mongodb://localhost:27017/CitySuperMarketDB",function(err)
+// {
+//     if(err)
+//         console.log("error"+err);
+//     else
+//         console.log("connected");
+// });
 
 
 
