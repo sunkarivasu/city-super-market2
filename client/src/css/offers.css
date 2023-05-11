@@ -71,7 +71,7 @@
 
 .winner-name
 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
 }
 
@@ -228,6 +228,7 @@
     border-radius: 2px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     margin-bottom: 30px;
+    margin-top: 20px;
 
 }
 
@@ -319,7 +320,7 @@
 
 .congrats-message
 {
-    font-size: 27px;
+    font-size: 20px;
     font-weight: 900;
     letter-spacing: 2px;
     font-family: 'Vesna Regular';

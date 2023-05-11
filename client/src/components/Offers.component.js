@@ -310,7 +310,7 @@ function OffersPage()
                     </div>
                 </div>
                 {stage['isDeclaring']?
-                <CongratulationsContainer/>
+                previousWinner && <CongratulationsContainer winnerName={previousWinner.winnerName}/>
                 // 
                 :
                     <div className="timmer">
@@ -447,7 +447,7 @@ function Digits(props)
     }
 }
 
-function CongratulationsContainer()
+function CongratulationsContainer(props)
 {
     return (
     <div className="congratulations-container">
@@ -455,7 +455,7 @@ function CongratulationsContainer()
             <img className="bouquet-image" src="images/offers/gift.gif"/>
         </div>
         <p className="congrats-message">Congratulations</p>
-        <p className="winner-name">xyz</p>
+        <p className="winner-name">{props && props.winnerName && props.winnerName}</p>
     </div>)
 
 }
