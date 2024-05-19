@@ -92,7 +92,7 @@ cron.schedule("40 16 * * *",() =>
                         .then(() =>
                         {
                             OfferUser.findOneAndUpdate({
-                                   _id:winner._id 
+                                   _id:winner._id
                             },{
                                 alreadyWinner:true
                             })
@@ -115,36 +115,36 @@ cron.schedule("40 16 * * *",() =>
                     console.log("Error occured while generating winner...",err);
                 })
             }
-            
+
         })
         .catch((err) =>
         {
             console.log("Error occured while fetchnig offerUsers count",err);
         })
-        
+
     }
 
-    
+
 });
 })
 
 // for remote connection
-mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
-    if(err)
-        console.log("Error while connecting to database:"+err);
-    else
-        console.log("conneted to database")
-});
+// mongoose.connect(process.env.URI,{useNewUrlParser:true},(err) =>{
+//     if(err)
+//         console.log("Error while connecting to database:"+err);
+//     else
+//         console.log("conneted to database")
+// });
 
 
 // for local connection
-// mongoose.connect("mongodb://localhost:27017/CitySuperMarketDB",function(err)
-// {
-//     if(err)
-//         console.log("error"+err);
-//     else
-//         console.log("connected");
-// });
+mongoose.connect("mongodb://localhost:27017/CitySuperMarketDB",function(err)
+{
+    if(err)
+        console.log("error"+err);
+    else
+        console.log("connected");
+});
 
 
 
@@ -156,6 +156,7 @@ var paymentRouter = require("./routes/payments");
 var offerRouter = require("./routes/offers");
 var offerUserRouter = require("./routes/offerUsers");
 var normalOfferRouter = require("./routes/normalOffers");
+const userRequestsRouter = require("./routes/userRequests");
 var multer = require("multer");
 const { param } = require("./routes/users");
 const { log } = require("async");
@@ -170,6 +171,7 @@ app.use("/payments",paymentRouter);
 app.use("/offers",offerRouter)
 app.use("/normalOffers",normalOfferRouter)
 app.use("/offerUsers",offerUserRouter)
+app.use("/userRequests",userRequestsRouter);
 app.use(passport.initialize());
 
 if (process.env.NODE_ENV === 'production') {
@@ -202,7 +204,7 @@ app.get("/checkUserToken",passport.authenticate("jwt",{session:false}),(req,res)
 
 app.post("/paynow", [parseUrl, parseJson], (req, res) => {
     // Route for making payment
-  
+
     var paymentDetails = {
       amount: req.body.amount,
       customerId: req.body.firstName+" "+req.body.lastName,
@@ -224,50 +226,50 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
       params['EMAIL'] = paymentDetails.customerEmail;
       params['MOBILE_NO'] = paymentDetails.customerPhone;
 
-  
-  
+
+
       checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
           var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
           // var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
 
           res.send({"parameters":params,"txn_url":txn_url,"checksum":checksum})
-  
-         
+
+
       });
   }
   });
   // app.post("/callback", (req, res) => {
   //   // Route for verifiying payment
-  
+
   //   var body = '';
-  
+
   //   req.on('data', function (data) {
   //      body += data;
   //   });
-  
+
   //    req.on('end', function () {
   //      var html = "";
   //      var post_data = qs.parse(body);
-  
+
   //      // received params in callback
   //      console.log('Callback Response: ', post_data, "\n");
-  
-  
+
+
   //      // verify the checksum
   //      var checksumhash = post_data.CHECKSUMHASH;
   //      // delete post_data.CHECKSUMHASH;
   //      var result = checksum_lib.verifychecksum(post_data, config.PaytmConfig.key, checksumhash);
   //      console.log("Checksum Result => ", result, "\n");
-  
-  
+
+
   //      // Send Server-to-Server request to verify Order Status
   //      var params = {"MID": config.PaytmConfig.mid, "ORDERID": post_data.ORDERID};
-  
+
   //      checksum_lib.genchecksum(params, config.PaytmConfig.key, function (err, checksum) {
-  
+
   //        params.CHECKSUMHASH = checksum;
   //        post_data = 'JsonData='+JSON.stringify(params);
-  
+
   //        var options = {
   //          hostname: 'securegw-stage.paytm.in', // for staging
   //          // hostname: 'securegw.paytm.in', // for production
@@ -279,18 +281,18 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   //            'Content-Length': post_data.length
   //          }
   //        };
-  
-  
+
+
   //        // Set up the request
   //        var response = "";
   //        var post_req = https.request(options, function(post_res) {
   //          post_res.on('data', function (chunk) {
   //            response += chunk;
   //          });
-  
+
   //          post_res.on('end', function(){
   //            console.log('S2S Response: ', response, "\n");
-  
+
   //            var _result = JSON.parse(response);
   //              if(_result.STATUS == 'TXN_SUCCESS') {
   //                  res.send('payment sucess')
@@ -299,7 +301,7 @@ app.post("/paynow", [parseUrl, parseJson], (req, res) => {
   //              }
   //            });
   //        });
-  
+
   //        // post the data
   //        post_req.write(post_data);
   //        post_req.end();

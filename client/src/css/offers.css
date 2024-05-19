@@ -15,14 +15,15 @@
     /* padding: 0px 0px 100px 0px; */
     text-align: center;
     /* padding:60px 0px 30px 0px; */
+    padding: 30px 0px;
 }
 
-.offers-page .csm-heading 
+.offers-page .csm-heading
 {
     font-size: 20px;
     margin: auto;
     color: #576CBC;
-    
+
 }
 
 .winner-container, .winner-list-container
@@ -92,7 +93,7 @@
 
 .winner-component
 {
-    
+
 }
 
 .no-image
@@ -128,7 +129,7 @@
     justify-content: center;
 }
 
-.phoneNumber
+.phoneNumberDigits
 {
     background-color: #C689C6;
     color: white;
@@ -143,7 +144,7 @@
 .next-offer-div
 {
     background-color: white;
-    border-radius: 10px;
+    border-radius: 5px;
     text-align: left;
     padding: 10px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
@@ -152,6 +153,7 @@
 .next-offer-product-image
 {
     background-color: #C8B6E2;
+    border: 2px solid #C8B6E2;
     text-align: center;
     width: 100%;
     border-radius: 5px;
@@ -227,8 +229,7 @@
     padding: 10px;
     border-radius: 2px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    margin-bottom: 30px;
-    margin-top: 20px;
+    margin: 20px auto
 
 }
 
@@ -278,7 +279,7 @@
     margin-top:50px
 }
 
-.waiting-time-container 
+.waiting-time-container
 {
     width:100vw;
     height: 100vh;
@@ -296,7 +297,7 @@
 
 .winner-each-number
 {
-    border: 1px solid black;   
+    border: 1px solid black;
     padding: 0px 5px;
     font-size: 20px;
     border-radius: 5px;
@@ -377,10 +378,87 @@
 {
     padding-left: 0px;
     padding-right: 0px;
+    font-size: 18px;
+}
+
+.item-price{
+    font-size: 15px;
 }
 
 .csm-logo
 {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
+
+.winner-component, .congratulations-container, .next-offer-div
+{
+    max-width: 280px;
+}
+
+.next-offer, .winner-list-container, .winner-container, .normal-offers-container, .congratulations-container
+{
+    max-width: 280px;
+    margin: auto;
+}
+
+#previous-winners-carousel, #offers-carousel
+{
+    max-width: 280px;
+    margin: auto;
+}
+
+.winner-phoneNumber{
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.offerList-item-status{
+    display: inline-block;
+}
+
+
+.Active, .InActive{
+    position: absolute;
+    display: inline;
+    font-size: 90px;
+    top:-57px;
+    left:-5px
+    /* padding: 10px; */
+}
+
+.Active{
+    color: green;
+}
+
+.InActive{
+    color:red
+}
+
+.winner-phoneNumber{
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.offer-user-request-form
+{
+    max-width: 300px;
+    margin: auto ;
+    text-align: left;
+    margin:20px auto;
+}
+
+.offerUserRequestForm-title
+{
+    font-size:1.5rem ;
+    font-weight:500;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.offerUserRequest-description
+{
+    opacity: 70%;
+    text-align: center;
+}
+

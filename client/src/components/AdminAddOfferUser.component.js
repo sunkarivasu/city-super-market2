@@ -23,14 +23,14 @@ function AdminAddOfferUser(props)
 
         function validate()
         {
-            if (form.nameErr=="" && form.phoneNumberErr=="")
+            if (form.nameErr==="" && form.phoneNumberErr==="")
                 setCanBeSubmitted(true);
             else
                 setCanBeSubmitted(false);
         }
 
-        
-      
+
+
         if(checkForm)
         {
             validate()
@@ -79,7 +79,7 @@ function AdminAddOfferUser(props)
         {
             var l = event.target.value.length
             var lc = event.target.value.charAt(l-1)
-            if((lc=='0' || lc=='1' || lc=='2' || lc=='3' || lc=='4' || lc=='5' || lc=='6' || lc=='7' || lc=='8' ||lc=='9') && l<=10) 
+            if((lc=='0' || lc=='1' || lc=='2' || lc=='3' || lc=='4' || lc=='5' || lc=='6' || lc=='7' || lc=='8' ||lc=='9') && l<=10)
             {
                 setForm({...form,[event.target.id]:event.target.value});
                 validateForm(event.target.id,event.target.value)
@@ -118,8 +118,8 @@ function AdminAddOfferUser(props)
             else if (value.length != 10)
                 setForm({...form,phoneNumberErr:"Invalid Phone Number",phoneNumber:value})
             else
-                setForm({...form,phoneNumberErr:"",phoneNumber:value})          
-            break     
+                setForm({...form,phoneNumberErr:"",phoneNumber:value})
+            break
         }
     }
 
@@ -138,11 +138,11 @@ function AdminAddOfferUser(props)
                 <label htmlFor="phoneNumber">Phone Number</label>
                 <input type="text" className="form-control price"  onChange={handleChangeForm} id="phoneNumber" value={form.phoneNumber}/>
                 { form.phoneNumberErr.length>0 && form.phoneNumberErr!="init" && <p className="adminErr err">{form.phoneNumberErr}</p>}
-            </div>        
+            </div>
             <div className="form-group">
                 <label htmlFor="noOfDays">Number Of Days</label>
                 <input type="text" className="form-control noOfDays"  onChange={handleChangeForm} id="noOfDays" value={form.noOfDays} placeholder="Default:30days"/>
-            </div>        
+            </div>
             { canBeSubmitted?<button type="button" className="btn btn-primary" onClick={addOfferUSer}>Add</button>:<button type="button" className="btn btn-primary" disabled>Add</button>}
             {/* {addSuccess && <p className="successMsg">Offer User added Successfully</p>}
             {addFailure && <p className="failureMsg">Please Try Again</p>} */}

@@ -81,7 +81,7 @@ function CheckOutPage()
         else
             setForm({...form,[id]:event.target.value})
         }
-        
+
 
 
     const validateForm = () =>
@@ -94,7 +94,7 @@ function CheckOutPage()
             firstNameErr="Invalid FirstName"
         else
             firstNameErr=""
-    
+
         //lastName Error
         if(form.lastName.length==0)
             lastNameErr="Enter LastName"
@@ -102,15 +102,15 @@ function CheckOutPage()
             lastNameErr="Invalid LastName"
         else
             lastNameErr=""
-    
-        //streetName Error 
+
+        //streetName Error
         if(form.streetName.length==0)
             streetNameErr="Enter streetName"
         else if(form.streetName.match(/^[a-zA-Z ]{2,}$/))
             streetNameErr=""
         else
             streetNameErr="Invalid streetName"
-        
+
         //mobile Error
         if(form.mobile.length==0)
             mobileErr="Enter Mobile Number"
@@ -118,7 +118,7 @@ function CheckOutPage()
             mobileErr="Invalid Mobile Number";
         else
             mobileErr=""
-    
+
         //pincode Error
         if(form.pinCode.length==0)
             pinCodeErr="Enter Pincode"
@@ -126,19 +126,19 @@ function CheckOutPage()
             pinCodeErr="Invalid PinCode";
         else
             pinCodeErr=""
-        
+
         //mandel Error
         if(form.mandel=="None")
             mandelErr="Select mandel"
         else
             mandelErr=""
-        
-        //village Error 
+
+        //village Error
         if(form.village=="None")
             villageErr="Select Village/Town"
         else
             villageErr=""
-    
+
         //doorNumber Error
         if(form.doorNumber.length==0)
             doorNumberErr="Enter DoorNo"
@@ -146,7 +146,7 @@ function CheckOutPage()
             doorNumberErr=""
 
         setForm({...form,firstNameErr:firstNameErr,lastNameErr:lastNameErr,mobileErr:mobileErr,mandelErr:mandelErr,villageErr:villageErr,pinCodeErr:pinCodeErr,doorNumberErr:doorNumberErr,streetNameErr:streetNameErr})
-        
+
         if(firstNameErr=="" && lastNameErr=="" && mobileErr=="" && mandelErr=="" && villageErr=="" && doorNumberErr=="" && streetNameErr=="" && pinCodeErr=="")
             return true
         else
@@ -172,17 +172,17 @@ function CheckOutPage()
                 doorNumber:form.doorNumber,
                 streetName:form.streetName,
                 // landMark:String,
-                pinCode:form.pinCode,  
+                pinCode:form.pinCode,
             }
 
 
         axios.post("/paynow",deliveryAddress)
         .then((res) =>
         {
-            console.log("payment initiated");
-            console.log(JSON.stringify(res.data));
-            localStorage.setItem("paymentDetails",JSON.stringify(res.data));
-            navigate("/paymentCheckOut")
+            // console.log("payment initiated");
+            // console.log(JSON.stringify(res.data));
+            // localStorage.setItem("paymentDetails",JSON.stringify(res.data));
+            navigate("/order")
         })
         .catch((err) =>
         {
@@ -203,7 +203,7 @@ function CheckOutPage()
                     actualQuantity = productDetails.orderQuantity
                 }
 
-                var order = 
+                var order =
                 {
                     productId:productDetails._id,
                     userId:JSON.parse(user)._id,
@@ -214,20 +214,20 @@ function CheckOutPage()
                 console.log(order);
                 axios.post("/orders/add",order)
                 .then(()=>
-                    { 
+                    {
                         console.log("order placed");
                     })
                 .catch((err)=>{console.log("Error:"+err)})
             })
 
             // end for placing order after payment
-            
+
                 //setOrderPlaced(true)
             // showToastOnSuccess()
             // setTimeout(() => navigate("/order"),2000);
         }
-    } 
-        
+    }
+
 
 
     return (

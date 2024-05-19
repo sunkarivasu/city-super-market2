@@ -10,7 +10,7 @@ function Orders()
     var [user,setUser] = useState(localStorage.getItem("user"));
     var [userDetails,setUserDetails] = useState(JSON.parse(user));
     var [orderList,setOrderList] = useState(null);
-    
+
     useEffect(()=>
     {
         axios.get("/checkUserToken",{
@@ -28,9 +28,10 @@ function Orders()
             navigate("/");
         });
     },[])
-    
+
     function createOrderItem(props)
     {
+        console.log(props)
         return <div>
         <div className="itemInCart itemInOrderList"><div className=" row">
             <div className="col-md-3 itemInCart-img"><img style={{width:"100px",height:"100px"}} src={props.productDetails[0].image}/></div>

@@ -4,6 +4,13 @@ var NormalOffer = require("../models/normalOffer.model");
 
 router.route("/").get((req,res)=>
 {
+    NormalOffer.find().sort({_id:-1})
+    .then((offers) => res.json(offers))
+    .catch((err) => res.status(400).json("Error"+err));
+});
+
+router.route("/getActiveOffers").get((req,res)=>
+{
     NormalOffer.find({status:"Active"})
     .then((offers) => res.json(offers))
     .catch((err) => res.status(400).json("Error"+err));

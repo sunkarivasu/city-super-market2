@@ -15,15 +15,14 @@ function AdminShowAllOfferUsers(props)
     var [activeCount,setActiveCount] = useState(null);
 
     useEffect(() => {
-
         axios.get("/offerUsers/")
             .then((res) => {
                 console.log(res.data);
-                var activeCountTemp = 0;  
+                var activeCountTemp = 0;
                 var alongWithStatus = res.data.reverse().map((offerUser) =>{
                     var time = new Date().getTime();
-                    var startTime = new Date(offerUser.startDate.slice(5,7)+"/"+offerUser.startDate.slice(8,10)+"/"+offerUser.startDate.slice(0,4)).getTime()
-                    var endTime = new Date(offerUser.endDate.slice(5,7)+"/"+offerUser.endDate.slice(8,10)+"/"+offerUser.endDate.slice(0,4)).getTime()
+                    var startTime = new Date(new Date(offerUser.startDate).getTime() - (1000 * 60 * 60 * 5.5)).getTime()
+                    var endTime = new Date(new Date(offerUser.endDate).getTime() - (1000 * 60 * 60 * 5.5)).getTime()
                     console.log(startTime,time,endTime);
                     if(startTime <= time && endTime >= time)
                     {
@@ -38,7 +37,7 @@ function AdminShowAllOfferUsers(props)
                 setOfferUsers(alongWithStatus)
                 setActiveCount(activeCountTemp)
                 setFilteredOfferUsers(alongWithStatus)})
-            .catch((err) => console.log("Error Occured while fetching offerUsers"))    
+            .catch((err) => console.log("Error Occured while fetching offerUsers"))
 
         return () => {}
     },[]);
@@ -66,8 +65,8 @@ function AdminShowAllOfferUsers(props)
         else
         {
             setPhoneNumberFilter(event.target.value.slice(0,l-1))
-        } 
-    }  
+        }
+    }
 
     function handleEditOfferUser(event)
     {
@@ -107,7 +106,7 @@ function AdminShowAllOfferUsers(props)
                     <option value="InActive">InActive</option>
                 </select>
             </div>
-            
+
         </div>
         {offerUsers && <div className="counters">
                     <p className="total-users-count">Total:{offerUsers.length}</p>
@@ -141,7 +140,7 @@ function AdminShowAllOfferUsers(props)
                         <p style={{margin:"25px 0px"}}>{offerUser.endDate.slice(0,10)}</p>
                     </div>
                     <div className="offerList-item-status col-2">
-                        <p style={{margin:"25px 0px"}}>{offerUser.status}</p>
+                        <p style={{margin:"25px 0px"}}><p className={offerUser.status}>.</p>{offerUser.status}</p>
                     </div>
                     <div className="offerList-item-edit col-1">
                         <button className="btn btn-secondary productList-item-edit-btn" style={{margin:"25px 10px 25px 0px"}} id={offerUser._id} onClick={handleEditOfferUser}>Edit</button>

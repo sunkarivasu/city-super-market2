@@ -1,6 +1,6 @@
 const router = require('express').Router();
 var User = require("../models/user.model");
-var mongoose = require("mongoose"); 
+var mongoose = require("mongoose");
 var passport = require("passport");
 var {hashSync,compareSync} = require("bcrypt");
 var jwt = require("jsonwebtoken");
@@ -39,7 +39,7 @@ router.route("/registerAdmin").post((req,res)=>
             password:hashSync(req.body.password,10),
             isAdmin:true
         }
-    ) 
+    )
     admin.save()
     .then(()=>{res.json("registered successfully")})
     .catch((err) =>{
@@ -73,7 +73,7 @@ router.route("/loginAdmin").post((req,res)=>
                 const jwt_payload = {
                     id:admin._id,
                     emailId:admin.emailId
-                } 
+                }
 
                 const token = jwt.sign(jwt_payload,"something",{expiresIn:"1d"})
                 res.send({
@@ -102,7 +102,7 @@ router.route("/checkEmailId/:emailId").get((req,res) =>
                 success:false,
                 err:null
             })
-        }   
+        }
         else
         {
             res.send({
@@ -110,11 +110,11 @@ router.route("/checkEmailId/:emailId").get((req,res) =>
                 success:true,
                 err:null
             })
-        }      
+        }
     })
     .catch((err)=>
     {
-        res.json(console.log("Error:"+err)); 
+        res.json(console.log("Error:"+err));
     })
 })
 
@@ -158,7 +158,7 @@ router.route("/add").post((req,res) =>
                     err:err,
                     msg:"Error occured while registering the user."
                 })
-            );        
+            );
         }})
     });
 
@@ -189,7 +189,7 @@ router.route("/login").post((req,res)=>
                 const jwt_payload = {
                     id:user._id,
                     emailId:user.emailId
-                } 
+                }
 
                 const token = jwt.sign(jwt_payload,"something",{expiresIn:"1d"})
                 res.send({
@@ -206,9 +206,13 @@ router.route("/login").post((req,res)=>
 
 router.route("/addToCart/:userId/:itemId").post((req,res) =>
 {
+    console.log(req.params);
     User.updateOne({_id:req.params.userId},{$push:{cartItems:{productId:req.params.itemId,orderQuantity:1}}})
     .then(() => {res.json("product added to cart")})
-    .catch((err) => {res.status(400).json(err)})
+    .catch((err) => {
+        console.error(err);
+        res.status(400).json(err)
+    })
 })
 
 router.route("/removeFromCart/:userId/:itemId").post((req,res) =>
@@ -250,45 +254,98 @@ router.route("/inCartOrNot/:userId/:itemId").get((req,res) =>
     // .catch((err) => {res.status(400).json("Error occured while checking in cart"+err)})
 })
 
-router.route("/cartItems/:userId").get((req,res) =>
-{
-    // console.log(req.params.userId);
-    User.findOne({_id:req.params.userId})
+// router.route("/cartItems/:userId").get((req,res) =>
+// {
+//     // console.log(req.params.userId);
+//     User.findOne({_id:req.params.userId})
+//     .then(async (user) => {
+//         var cartIds = user.cartItems;
+//         var cartItems =[]
+//         for(var i=0;i<cartIds.length;i++)
+//         {
+//             await Product.findOne({_id:cartIds[i].productId})
+//             .then((product) => {
+//                 // orderQuantity=cartIds[i].orderQuantity
+//                 result={_id:product._id,
+//                     category:product.category,
+//                     subCategory:product.subCategory,
+//                     image:product.image,
+//                     brand:product.brand,
+//                     price:product.price,
+//                     description:product.description,
+//                     discount:product.discount,
+//                     quantity:product.quantity,
+//                     orderQuantity:cartIds[i].orderQuantity }
+//                 console.log(result);
+//                 if(product)
+//                 {
+//                     cartItems.push(result)
+//                 }
+//                 else
+//                 {
+//                     User.updateOne({_id:req.params.userId},{$pull:{cartItems:{productId:cartIds[i].productId}}})
+//                 .then(()=>{console.log("Removed a product from cart because product is deleted by admin")})
+//                 .catch((err)=>{console.log("Error:"+err)})
+//                 }
+//             })
+//             .catch((err) => {res.status(400).json("Error while fetching cart Items:"+err)});
+//         }
+//         res.json(cartItems);
+//     });
+// })
+
+router.route("/cartItems/:userId").get((req, res) => {
+    User.findOne({_id: req.params.userId})
     .then(async (user) => {
-        var cartIds = user.cartItems;
-        var cartItems =[]
-        for(var i=0;i<cartIds.length;i++)
-        {
-            await Product.findOne({_id:cartIds[i].productId})
+        const cartIds = user.cartItems;
+        console.log(cartIds);
+        const cartItems = [];
+        const promises = []; // Array to hold all promises
+
+        for(let i = 0; i < cartIds.length; i++) {
+            let promise = Product.findOne({_id: cartIds[i].productId})
             .then((product) => {
-                // orderQuantity=cartIds[i].orderQuantity
-                result={_id:product._id,
-                    category:product.category,
-                    subCategory:product.subCategory,
-                    image:product.image,
-                    brand:product.brand,
-                    price:product.price,
-                    description:product.description,
-                    discount:product.discount,
-                    quantity:product.quantity,
-                    orderQuantity:cartIds[i].orderQuantity }
-                console.log(result);
-                if(product)
-                {
-                    cartItems.push(result)
+                if(product) {
+                    var result = {
+                        _id: product._id,
+                        category: product.category,
+                        subCategory: product.subCategory,
+                        image: product.image,
+                        brand: product.brand,
+                        price: product.price,
+                        description: product.description,
+                        discount: product.discount,
+                        quantity: product.quantity,
+                        orderQuantity: cartIds[i].orderQuantity
+                    };
+                    console.log(result);
+                    cartItems.push(result);
+                } else {
+                    // Handle case where product is not found
+                    User.updateOne({_id: req.params.userId}, {$pull: {cartItems: {productId: cartIds[i].productId}}})
+                    .then(() => {
+                        console.log("Removed a product from cart because product is deleted by admin");
+                    })
+                    .catch((err) => {
+                        console.log("Error:" + err);
+                    });
                 }
-                else
-                {
-                    User.updateOne({_id:req.params.userId},{$pull:{cartItems:{productId:cartIds[i].productId}}})
-                .then(()=>{console.log("Removed a product from cart because product is deleted by admin")})
-                .catch((err)=>{console.log("Error:"+err)})
-                } 
             })
-            .catch((err) => {res.status(400).json("Error while fetching cart Items:"+err)});
+            .catch((err) => {
+                console.log("Error while fetching cart Items:" + err);
+            });
+            promises.push(promise); // Push promise to array
         }
-        res.json(cartItems);        
+
+        // Wait for all promises to resolve before sending response
+        await Promise.all(promises);
+
+        res.json(cartItems); // Send response after all promises are resolved
+    })
+    .catch((err) => {
+        res.status(400).json("Error while fetching user:" + err);
     });
-})
+});
 
 
 router.route("/removeAllProductFromCartByUserId").post((req,res)=>

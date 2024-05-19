@@ -52,10 +52,6 @@ function App() {
 
               {/* offers routes*/}
               <Route path="/offers" element={<OffersPage/>}/>
-
-
-
-
             </Routes>
           </div>
         </Router>);

@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema(
         emailId:String,
         phoneNumber:Number,
         address:mongoose.Schema.ObjectId,
-        cartItems:[ mongoose.Schema.ObjectId], 
+        cartItems:[ {productId: mongoose.Schema.ObjectId, orderQuantity:Number}],
         isAdmin:Boolean
     }
 );
